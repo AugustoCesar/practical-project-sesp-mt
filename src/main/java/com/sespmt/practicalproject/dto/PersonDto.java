@@ -18,7 +18,7 @@ public class PersonDto implements Serializable {
     private String fatherName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private AddressDto addressDto;
+    private AddressDto address;
 
     public PersonDto() {
     }
@@ -125,12 +125,12 @@ public class PersonDto implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public AddressDto getAddressDto() {
-        return addressDto;
+    public AddressDto getAddress() {
+        return address;
     }
 
-    public void setAddressDto(AddressDto addressDto) {
-        this.addressDto = addressDto;
+    public void setAddress(AddressDto address) {
+        this.address = address;
     }
 
     @Override
@@ -180,7 +180,7 @@ public class PersonDto implements Serializable {
                 ", fatherName='" + fatherName + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", addressDto=" + addressDto +
+                ", addressDto=" + address +
                 '}';
     }
 }
