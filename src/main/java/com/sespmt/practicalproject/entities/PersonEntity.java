@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "person")
-public class Person implements Serializable {
+public class PersonEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -43,21 +43,21 @@ public class Person implements Serializable {
     private LocalDateTime updatedAt;
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
-    private Address address;
+    private AddressEntity address;
 
-    public Person() {
+    public PersonEntity() {
     }
 
-    public Person(Long id,
-                  String name,
-                  String rg,
-                  String cpf,
-                  LocalDate birthDate,
-                  String phoneNumber,
-                  String motherName,
-                  String fatherName,
-                  LocalDateTime createdAt,
-                  LocalDateTime updatedAt) {
+    public PersonEntity(Long id,
+                        String name,
+                        String rg,
+                        String cpf,
+                        LocalDate birthDate,
+                        String phoneNumber,
+                        String motherName,
+                        String fatherName,
+                        LocalDateTime createdAt,
+                        LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.rg = rg;
@@ -150,11 +150,11 @@ public class Person implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public Address getAddress() {
+    public AddressEntity getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(AddressEntity address) {
         this.address = address;
     }
 
@@ -163,7 +163,7 @@ public class Person implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Person person = (Person) o;
+        PersonEntity person = (PersonEntity) o;
 
         if (!Objects.equals(id, person.id)) return false;
         if (!Objects.equals(name, person.name)) return false;

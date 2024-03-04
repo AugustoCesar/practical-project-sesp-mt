@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "address")
-public class Address implements Serializable {
+public class AddressEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -32,18 +32,18 @@ public class Address implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "person_id")
-    private Person person;
+    private PersonEntity person;
 
-    public Address() {
+    public AddressEntity() {
     }
 
-    public Address(Long id,
-                   String publicPlace,
-                   String neighborhood,
-                   Integer number,
-                   String city,
-                   String state,
-                   String postalCode) {
+    public AddressEntity(Long id,
+                         String publicPlace,
+                         String neighborhood,
+                         Integer number,
+                         String city,
+                         String state,
+                         String postalCode) {
         this.id = id;
         this.publicPlace = publicPlace;
         this.neighborhood = neighborhood;
@@ -109,11 +109,11 @@ public class Address implements Serializable {
         this.postalCode = postalCode;
     }
 
-    public Person getPerson() {
+    public PersonEntity getPerson() {
         return person;
     }
 
-    public void setPerson(Person person) {
+    public void setPerson(PersonEntity person) {
         this.person = person;
     }
 
@@ -122,7 +122,7 @@ public class Address implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Address address = (Address) o;
+        AddressEntity address = (AddressEntity) o;
 
         if (!Objects.equals(id, address.id)) return false;
         if (!Objects.equals(publicPlace, address.publicPlace)) return false;
