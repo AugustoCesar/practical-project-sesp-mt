@@ -7,27 +7,40 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class PersonDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+
+    @Size(min = 5, max = 60, message = "Deve conter entre 5 e 60 caracteres")
+    @NotBlank(message = "Campo requerido")
     private String name;
     private String rg;
+
+    @Size(min = 11, max = 11, message = "Deve conter 11 caracteres válidos")
+    @NotBlank(message = "Campo requerido")
+    @CPF(message = "Número de CPF inválido")
     private String cpf;
 
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "Campo requerido")
     private LocalDate birthDate;
     private String phoneNumber;
+
+    @Size(min = 5, max = 60, message = "Deve conter entre 5 e 60 caracteres")
+    @NotBlank(message = "Campo requerido")
     private String motherName;
     private String fatherName;
 
@@ -41,7 +54,7 @@ public class PersonDto implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    private Set<AddressDto> addresses = new HashSet<>();
+    private List<AddressDto> addresses = new ArrayList<>();
 
     public PersonDto() {
     }
@@ -148,7 +161,7 @@ public class PersonDto implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public Set<AddressDto> getAddresses() {
+    public List<AddressDto> getAddresses() {
         return addresses;
     }
 
