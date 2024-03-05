@@ -14,7 +14,6 @@ public class AddressDto implements Serializable {
     private String city;
     private String state;
     private String postalCode;
-    private PersonDto person;
 
     public AddressDto() {
     }
@@ -91,13 +90,6 @@ public class AddressDto implements Serializable {
         this.postalCode = postalCode;
     }
 
-    public PersonDto getPerson() {
-        return person;
-    }
-
-    public void setPerson(PersonDto person) {
-        this.person = person;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -138,7 +130,6 @@ public class AddressDto implements Serializable {
                 ", city='" + city + '\'' +
                 ", state='" + state + '\'' +
                 ", postalCode='" + postalCode + '\'' +
-                ", personDto=" + person +
                 '}';
     }
 }

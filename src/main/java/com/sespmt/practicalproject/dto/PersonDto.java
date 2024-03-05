@@ -1,9 +1,19 @@
 package com.sespmt.practicalproject.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class PersonDto implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -12,13 +22,26 @@ public class PersonDto implements Serializable {
     private String name;
     private String rg;
     private String cpf;
+
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
     private String phoneNumber;
     private String motherName;
     private String fatherName;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
-    private AddressDto address;
+
+    private Set<AddressDto> addresses = new HashSet<>();
 
     public PersonDto() {
     }
@@ -125,12 +148,8 @@ public class PersonDto implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public AddressDto getAddress() {
-        return address;
-    }
-
-    public void setAddress(AddressDto address) {
-        this.address = address;
+    public Set<AddressDto> getAddresses() {
+        return addresses;
     }
 
     @Override
@@ -180,7 +199,7 @@ public class PersonDto implements Serializable {
                 ", fatherName='" + fatherName + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", addressDto=" + address +
+                ", addresses=" + addresses +
                 '}';
     }
 }

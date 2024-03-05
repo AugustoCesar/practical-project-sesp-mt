@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "person")
@@ -42,8 +44,9 @@ public class PersonEntity implements Serializable {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
-    private AddressEntity address;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    private Set<AddressEntity> addresses = new HashSet<>();
 
     public PersonEntity() {
     }
@@ -150,12 +153,8 @@ public class PersonEntity implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public AddressEntity getAddress() {
-        return address;
-    }
-
-    public void setAddress(AddressEntity address) {
-        this.address = address;
+    public Set<AddressEntity> getAddresses() {
+        return addresses;
     }
 
     @Override

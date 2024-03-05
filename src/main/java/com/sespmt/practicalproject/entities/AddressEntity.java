@@ -30,10 +30,6 @@ public class AddressEntity implements Serializable {
     @Column(nullable = false, length = 100)
     private String postalCode;
 
-    @OneToOne
-    @JoinColumn(name = "person_id")
-    private PersonEntity person;
-
     public AddressEntity() {
     }
 
@@ -107,14 +103,6 @@ public class AddressEntity implements Serializable {
 
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
-    }
-
-    public PersonEntity getPerson() {
-        return person;
-    }
-
-    public void setPerson(PersonEntity person) {
-        this.person = person;
     }
 
     @Override
