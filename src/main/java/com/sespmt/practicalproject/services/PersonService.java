@@ -76,7 +76,7 @@ public class PersonService {
 
     @Transactional(readOnly = true)
     public Page<PersonDto> findByCpf(String cpf, Pageable pageable) {
-        LOG.info("cpf = " + cpf);
+
         Page<PersonEntity> page = personRepository.findByCpf(cpf, pageable);
         return page.map(personMapper::toDto);
     }
