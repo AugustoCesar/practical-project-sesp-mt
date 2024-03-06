@@ -30,7 +30,7 @@ public class AddressEntity implements Serializable {
     @Column(nullable = false, length = 100)
     private String postalCode;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "address")
+    @ManyToOne(fetch = FetchType.LAZY)
     private PersonEntity person;
 
     public AddressEntity() {
