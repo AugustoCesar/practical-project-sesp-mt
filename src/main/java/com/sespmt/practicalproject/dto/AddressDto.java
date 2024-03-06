@@ -1,20 +1,41 @@
 package com.sespmt.practicalproject.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 public class AddressDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
-
     private Long id;
+
+    @Size(min = 1, max = 200, message = "Deve conter entre 1 e 200 caracteres válidos")
+    @NotBlank(message = "Campo requerido")
     private String publicPlace;
+
+    @Size(min = 1, max = 50, message = "Deve conter entre 1 e 50 caracteres válidos")
+    @NotBlank(message = "Campo requerido")
     private String neighborhood;
+
     private Integer number;
+
+    @Size(min = 1, max = 50, message = "Deve conter entre 1 e 50 caracteres válidos")
+    @NotBlank(message = "Campo requerido")
     private String city;
+
+    @Size(min = 2, max = 2, message = "Deve conter 2 caracteres válidos")
+    @NotBlank(message = "Campo requerido")
     private String state;
+
+    @Size(min = 1, max = 100, message = "Deve conter entre 1 e 100 caracteres válidos")
+    @NotBlank(message = "Campo requerido")
     private String postalCode;
+
     private PersonDto person;
+
     public AddressDto() {
     }
 
@@ -92,6 +113,7 @@ public class AddressDto implements Serializable {
         this.postalCode = postalCode;
     }
 
+    @JsonIgnore
     public PersonDto getPerson() {
         return person;
     }

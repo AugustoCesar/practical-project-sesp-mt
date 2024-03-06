@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,7 +16,9 @@ import org.hibernate.validator.constraints.br.CPF;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class PersonDto implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -54,7 +57,8 @@ public class PersonDto implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    private AddressDto address;
+    @Valid
+    private Set<AddressDto> address = new HashSet<>();
 
     public PersonDto() {
     }
@@ -161,10 +165,11 @@ public class PersonDto implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public AddressDto getAddress() {
+    public Set<AddressDto> getAddress() {
         return address;
     }
-    public void setAddress(AddressDto address) {
+
+    public void setAddress(Set<AddressDto> address) {
         this.address = address;
     }
 
