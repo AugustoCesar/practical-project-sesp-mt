@@ -44,9 +44,9 @@ public class PersonEntity implements Serializable {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", referencedColumnName = "id")
-    private Set<AddressEntity> addresses = new HashSet<>();
+    private AddressEntity address;
 
     public PersonEntity() {
     }
@@ -153,8 +153,12 @@ public class PersonEntity implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public Set<AddressEntity> getAddresses() {
-        return addresses;
+    public AddressEntity getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressEntity address) {
+        this.address = address;
     }
 
     @Override

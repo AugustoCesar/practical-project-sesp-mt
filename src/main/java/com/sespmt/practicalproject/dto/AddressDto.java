@@ -14,7 +14,7 @@ public class AddressDto implements Serializable {
     private String city;
     private String state;
     private String postalCode;
-
+    private PersonDto person;
     public AddressDto() {
     }
 
@@ -24,7 +24,8 @@ public class AddressDto implements Serializable {
                       Integer number,
                       String city,
                       String state,
-                      String postalCode) {
+                      String postalCode,
+                      PersonDto person) {
         this.id = id;
         this.publicPlace = publicPlace;
         this.neighborhood = neighborhood;
@@ -32,6 +33,7 @@ public class AddressDto implements Serializable {
         this.city = city;
         this.state = state;
         this.postalCode = postalCode;
+        this.person = person;
     }
 
     public Long getId() {
@@ -90,6 +92,13 @@ public class AddressDto implements Serializable {
         this.postalCode = postalCode;
     }
 
+    public PersonDto getPerson() {
+        return person;
+    }
+
+    public void setPerson(PersonDto person) {
+        this.person = person;
+    }
 
     @Override
     public boolean equals(Object o) {

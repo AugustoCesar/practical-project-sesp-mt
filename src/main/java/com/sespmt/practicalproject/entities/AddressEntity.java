@@ -30,6 +30,9 @@ public class AddressEntity implements Serializable {
     @Column(nullable = false, length = 100)
     private String postalCode;
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "address")
+    private PersonEntity person;
+
     public AddressEntity() {
     }
 
@@ -39,7 +42,8 @@ public class AddressEntity implements Serializable {
                          Integer number,
                          String city,
                          String state,
-                         String postalCode) {
+                         String postalCode,
+                         PersonEntity person) {
         this.id = id;
         this.publicPlace = publicPlace;
         this.neighborhood = neighborhood;
@@ -47,6 +51,7 @@ public class AddressEntity implements Serializable {
         this.city = city;
         this.state = state;
         this.postalCode = postalCode;
+        this.person = person;
     }
 
     public Long getId() {
@@ -103,6 +108,14 @@ public class AddressEntity implements Serializable {
 
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
+    }
+
+    public PersonEntity getPerson() {
+        return person;
+    }
+
+    public void setPerson(PersonEntity person) {
+        this.person = person;
     }
 
     @Override

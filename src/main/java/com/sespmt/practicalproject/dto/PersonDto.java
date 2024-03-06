@@ -15,7 +15,7 @@ import org.hibernate.validator.constraints.br.CPF;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Objects;
 
 public class PersonDto implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -54,7 +54,7 @@ public class PersonDto implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    private List<AddressDto> addresses = new ArrayList<>();
+    private AddressDto address;
 
     public PersonDto() {
     }
@@ -161,8 +161,11 @@ public class PersonDto implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public List<AddressDto> getAddresses() {
-        return addresses;
+    public AddressDto getAddress() {
+        return address;
+    }
+    public void setAddress(AddressDto address) {
+        this.address = address;
     }
 
     @Override
@@ -212,7 +215,7 @@ public class PersonDto implements Serializable {
                 ", fatherName='" + fatherName + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", addresses=" + addresses +
+                ", address=" + address +
                 '}';
     }
 }

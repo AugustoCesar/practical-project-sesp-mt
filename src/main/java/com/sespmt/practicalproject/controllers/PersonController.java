@@ -33,6 +33,16 @@ public class PersonController {
         return ResponseEntity.ok().body(page);
     }
 
+    @GetMapping(value = "/search-by-city")
+    public ResponseEntity<Page<PersonDto>> searchByCity(
+            @RequestParam(value = "state", defaultValue = "") String state,
+            @RequestParam(value = "city", defaultValue = "") String city,
+            Pageable pageable) {
+
+        Page<PersonDto> page = personService.searchPersonByCity(state, city, pageable);
+        return ResponseEntity.ok().body(page);
+    }
+
     @GetMapping(value = "/search-by-filter")
     public ResponseEntity<Page<PersonDto>> searchFiltered(
             @RequestParam(value = "name", defaultValue = "") String name,

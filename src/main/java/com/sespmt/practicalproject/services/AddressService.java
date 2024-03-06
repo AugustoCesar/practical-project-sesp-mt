@@ -12,11 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AddressService {
@@ -28,16 +33,27 @@ public class AddressService {
 
 
     @Transactional(readOnly = true)
+    public List<AddressDto> searchByCity(String state, String city) {
+
+        List<AddressEntity> searchResult = addressRepository.searchByCity(state, city);
+
+        return searchResult.stream().map(addressMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public Page<AddressDto> findAllPaged(Pageable pageable) {
         Page<AddressEntity> page = addressRepository.findAll(pageable);
         return page.map(addressMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public AddressDto findById(Long id) {
+    public Page<AddressDto> findById(Long id) {
         Optional<AddressEntity> obj = addressRepository.findById(id);
         AddressEntity entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
-        return addressMapper.toDto(entity);
+
+        List<AddressEntity> entityList = Collections.singletonList(entity);
+        Page<AddressEntity> page = new PageImpl<>(entityList, PageRequest.of(0, 10), entityList.size());
+        return page.map(addressMapper::toDto);
     }
 
     @Transactional
@@ -50,8 +66,9 @@ public class AddressService {
     @Transactional
     public AddressDto update(Long id, AddressDto dto) {
         try {
-            AddressEntity entity = addressMapper.toEntity(findById(id));
-            buildAddressUpdated(dto, entity);
+            Optional<AddressEntity> obj = addressRepository.findById(id);
+            AddressEntity entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
+            buildAddressToUpdate(dto, entity);
             entity = addressRepository.save(entity);
             return addressMapper.toDto(entity);
         } catch (EntityNotFoundException e) {
@@ -65,11 +82,11 @@ public class AddressService {
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException("Id not found " + id);
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Integry violation");
+            throw new DatabaseException("Integrity violation");
         }
     }
 
-    private void buildAddressUpdated(AddressDto dto, AddressEntity entity) {
+    private void buildAddressToUpdate(AddressDto dto, AddressEntity entity) {
 
         entity.setPublicPlace(dto.getPublicPlace());
         entity.setNeighborhood(dto.getNeighborhood());
