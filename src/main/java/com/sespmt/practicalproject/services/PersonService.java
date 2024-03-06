@@ -38,6 +38,9 @@ public class PersonService {
     @Autowired
     private PersonRepository personRepository;
 
+    @Autowired
+    private AddressService addressService;
+
     private final PersonMapper personMapper = Mappers.getMapper(PersonMapper.class);
 
     private final AddressMapper addressMapper = Mappers.getMapper(AddressMapper.class);
@@ -56,6 +59,20 @@ public class PersonService {
                 .searchFiltered(name, birthDate, motherName, pageable);
 
         return page.map(personMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PersonDto> searchPersonByCity(String state, String city, Pageable pageable) {
+
+        List<AddressDto> addressDtoList = addressService.searchByCity(state, city);
+
+//        List<Long> idList = addressDtoList.stream()
+//                .map(AddressDto::getPerson).map(PersonDto::getId)
+//                .collect(Collectors.toList());
+//
+//        List<PersonEntity> personEntityList = personRepository.findByIdIn(idList);
+
+        return null;
     }
 
     @Transactional(readOnly = true)
@@ -84,8 +101,10 @@ public class PersonService {
     @Transactional
     public PersonDto insert(PersonDto dto) {
         verifyExistingFields(dto);
+        AddressDto addressDto = addressService.insert(dto.getAddress());
         PersonEntity entity = personMapper.toEntity(dto);
         entity.setCreatedAt(LocalDateTime.now());
+        entity.setAddress(addressMapper.toEntity(addressDto));
         entity = personRepository.save(entity);
         return personMapper.toDto(entity);
     }
@@ -115,6 +134,8 @@ public class PersonService {
 
     private void buildPersonToUpdate(PersonDto dto, PersonEntity entity) {
 
+        AddressDto addressDto = addressService.insert(dto.getAddress());
+
         entity.setName(dto.getName());
         entity.setRg(dto.getRg());
         entity.setCpf(dto.getCpf());
@@ -123,12 +144,7 @@ public class PersonService {
         entity.setMotherName(dto.getMotherName());
         entity.setFatherName(dto.getFatherName());
         entity.setUpdatedAt(LocalDateTime.now());
-
-        entity.getAddresses().clear();
-        for (AddressDto addressDto : dto.getAddresses()) {
-            AddressEntity addressEntity = addressMapper.toEntity(addressDto);
-            entity.getAddresses().add(addressEntity);
-        }
+        entity.setAddress(addressMapper.toEntity(addressDto));
     }
 
     private void verifyExistingFields(PersonDto personDto) {
