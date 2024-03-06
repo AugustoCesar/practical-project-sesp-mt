@@ -28,7 +28,6 @@ public class PersonController {
 
     @GetMapping
     public ResponseEntity<Page<PersonDto>> findAllPaged(Pageable pageable) {
-
         Page<PersonDto> page = personService.findAllPaged(pageable);
         return ResponseEntity.ok().body(page);
     }
@@ -36,10 +35,8 @@ public class PersonController {
     @GetMapping(value = "/search-by-city")
     public ResponseEntity<Page<PersonDto>> searchByCity(
             @RequestParam(value = "state", defaultValue = "") String state,
-            @RequestParam(value = "city", defaultValue = "") String city,
-            Pageable pageable) {
-
-        Page<PersonDto> page = personService.searchPersonByCity(state, city, pageable);
+            @RequestParam(value = "city", defaultValue = "") String city) {
+        Page<PersonDto> page = personService.searchPersonByCity(state, city);
         return ResponseEntity.ok().body(page);
     }
 
@@ -57,19 +54,15 @@ public class PersonController {
     }
 
     @GetMapping(value = "/search-by-name")
-    public ResponseEntity<Page<PersonDto>> findByName(
-            @RequestParam(value = "name", defaultValue = "") String name,
-            Pageable pageable) {
-
+    public ResponseEntity<Page<PersonDto>> findByName(@RequestParam(value = "name", defaultValue = "") String name,
+                                                      Pageable pageable) {
         Page<PersonDto> page = personService.findByName(name, pageable);
         return ResponseEntity.ok().body(page);
     }
 
     @PostMapping(value = "/search-by-cpf")
-    public ResponseEntity<Page<PersonDto>> findByCpf(
-            @Valid @RequestBody RequestCpfDto dto,
-            Pageable pageable) {
-
+    public ResponseEntity<Page<PersonDto>> findByCpf(@Valid @RequestBody RequestCpfDto dto,
+                                                     Pageable pageable) {
         Page<PersonDto> page = personService.findByCpf(dto.getCpf(), pageable);
         return ResponseEntity.ok().body(page);
     }
@@ -83,12 +76,16 @@ public class PersonController {
     @PostMapping
     public ResponseEntity<PersonDto> insert(@Valid @RequestBody PersonDto dto) {
         PersonDto newDto = personService.insert(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{/id}").buildAndExpand(newDto.getId()).toUri();
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("{/id}")
+                .buildAndExpand(newDto.getId())
+                .toUri();
         return ResponseEntity.created(uri).body(newDto);
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<PersonDto> update(@Valid @PathVariable Long id, @Valid @RequestBody PersonDto dto) {
+    public ResponseEntity<PersonDto> update(@Valid @PathVariable Long id,
+                                            @Valid @RequestBody PersonDto dto) {
         PersonDto newDto = personService.update(id, dto);
         return ResponseEntity.ok().body(newDto);
     }
