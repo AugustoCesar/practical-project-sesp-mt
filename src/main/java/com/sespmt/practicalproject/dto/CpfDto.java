@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.br.CPF;
 
 import java.io.Serializable;
 
-public class RequestCpfDto implements Serializable {
+public class CpfDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
 
@@ -15,10 +15,10 @@ public class RequestCpfDto implements Serializable {
     @CPF(message = "Número de CPF inválido")
     private String cpf;
 
-    public RequestCpfDto() {
+    public CpfDto() {
     }
 
-    public RequestCpfDto(String cpf) {
+    public CpfDto(String cpf) {
         this.cpf = cpf;
     }
 

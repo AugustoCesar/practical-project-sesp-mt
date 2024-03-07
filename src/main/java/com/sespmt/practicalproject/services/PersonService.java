@@ -102,8 +102,8 @@ public class PersonService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PersonDto> findByCpf(String cpf, Pageable pageable) {
-        Page<PersonEntity> page = personRepository.findByCpf(cpf, pageable);
+    public Page<PersonDto> findByCpf(String cpf) {
+        Page<PersonEntity> page = personRepository.findByCpf(cpf, PageRequest.ofSize(1));
         return page.map(personConverter::toDto);
     }
 
@@ -162,7 +162,7 @@ public class PersonService {
         String cpf = personDto.getCpf();
         String motherName = personDto.getMotherName();
 
-        Page<PersonEntity> pageCpf = personRepository.findByCpf(cpf, PageRequest.of(0, 10));
+        Page<PersonEntity> pageCpf = personRepository.findByCpf(cpf, PageRequest.ofSize(1));
 
         Optional<PersonEntity> opt = personRepository.findByMotherNameIgnoreCase(motherName);
 
