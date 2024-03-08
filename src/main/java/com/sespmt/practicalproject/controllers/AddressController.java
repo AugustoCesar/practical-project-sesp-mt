@@ -45,25 +45,30 @@ public class AddressController {
 
     @Operation(description = "Cadastro de endereço")
     @PostMapping
-    public ResponseEntity<AddressDto> insert(
+    public ResponseEntity<Page<AddressDto>> insert(
             @Schema(description = "Corpo da requisição - dados do endereço a ser cadastrado",
                     implementation = AddressDto.class)
             @Valid @RequestBody AddressDto dto) {
-        AddressDto newDto = addressService.insert(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{/id}").buildAndExpand(newDto.getId()).toUri();
-        return ResponseEntity.created(uri).body(newDto);
+        Page<AddressDto> newPageDto = addressService.insert(dto);
+
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("{/id}")
+                .buildAndExpand(newPageDto.getContent().get(0).getId())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(newPageDto);
     }
 
     @Operation(description = "Atualização de dados de um endereço pelo ID")
     @PutMapping(value = "/{id}")
-    public ResponseEntity<AddressDto> update(
+    public ResponseEntity<Page<AddressDto>> update(
             @Schema(description = "ID do endereço a ser atualizado os dados")
             @Valid @PathVariable Long id,
             @Schema(description = "Corpo da requisição - dados do endereço a ser atualizado",
                     implementation = AddressDto.class)
             @Valid @RequestBody AddressDto dto) {
-        AddressDto newDto = addressService.update(id, dto);
-        return ResponseEntity.ok().body(newDto);
+        Page<AddressDto> newPageDto = addressService.update(id, dto);
+        return ResponseEntity.ok().body(newPageDto);
     }
 
     @Operation(description = "Remoção de cadastro de endereço pelo ID")

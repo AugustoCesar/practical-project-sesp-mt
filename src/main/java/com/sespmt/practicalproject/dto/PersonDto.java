@@ -58,7 +58,7 @@ public class PersonDto implements Serializable {
     private LocalDateTime updatedAt;
 
     @Valid
-    private Set<AddressDto> address = new HashSet<>();
+    private Set<AddressDto> addresses = new HashSet<>();
 
     public PersonDto() {
     }
@@ -165,12 +165,8 @@ public class PersonDto implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public Set<AddressDto> getAddress() {
-        return address;
-    }
-
-    public void setAddress(Set<AddressDto> address) {
-        this.address = address;
+    public Set<AddressDto> getAddresses() {
+        return addresses;
     }
 
     @Override
@@ -220,7 +216,7 @@ public class PersonDto implements Serializable {
                 ", fatherName='" + fatherName + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", address=" + address +
+                ", addresses=" + addresses +
                 '}';
     }
 }

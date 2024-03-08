@@ -97,28 +97,30 @@ public class PersonController {
 
     @Operation(description = "Cadastro de pessoa")
     @PostMapping
-    public ResponseEntity<PersonDto> insert(
+    public ResponseEntity<Page<PersonDto>> insert(
             @Schema(description = "Corpo da requisição - dados da pessoa a ser cadastrada",
                     implementation = PersonDto.class)
             @Valid @RequestBody PersonDto dto) {
-        PersonDto newDto = personService.insert(dto);
+        Page<PersonDto> newPageDto = personService.insert(dto);
+
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("{/id}")
-                .buildAndExpand(newDto.getId())
+                .buildAndExpand(newPageDto.getContent().get(0).getId())
                 .toUri();
-        return ResponseEntity.created(uri).body(newDto);
+
+        return ResponseEntity.created(uri).body(newPageDto);
     }
 
     @Operation(description = "Atualização de dados de uma pessoa pelo ID")
     @PutMapping(value = "/{id}")
-    public ResponseEntity<PersonDto> update(
+    public ResponseEntity<Page<PersonDto>> update(
             @Schema(description = "ID da pessoa a ser atualizada os dados")
             @Valid @PathVariable Long id,
             @Schema(description = "Corpo da requisição - dados da pessoa a ser atualizada",
                     implementation = PersonDto.class)
             @Valid @RequestBody PersonDto dto) {
-        PersonDto newDto = personService.update(id, dto);
-        return ResponseEntity.ok().body(newDto);
+        Page<PersonDto> newPageDto = personService.update(id, dto);
+        return ResponseEntity.ok().body(newPageDto);
     }
 
     @Operation(description = "Remoção de cadastro de pessoa pelo ID")

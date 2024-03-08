@@ -36,6 +36,8 @@ public class AddressDto implements Serializable {
 
     private PersonDto person;
 
+    private Long personId;
+
     public AddressDto() {
     }
 
@@ -120,6 +122,14 @@ public class AddressDto implements Serializable {
 
     public void setPerson(PersonDto person) {
         this.person = person;
+    }
+
+    public Long getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(Long personId) {
+        this.personId = personId;
     }
 
     @Override

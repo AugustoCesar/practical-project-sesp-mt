@@ -4,13 +4,14 @@ import com.sespmt.practicalproject.dto.AddressDto;
 import com.sespmt.practicalproject.dto.PersonDto;
 import com.sespmt.practicalproject.entities.AddressEntity;
 import com.sespmt.practicalproject.entities.PersonEntity;
-import com.sespmt.practicalproject.mapper.AddressConverter;
-import com.sespmt.practicalproject.mapper.PersonConverter;
+import com.sespmt.practicalproject.mapper.AddressMapper;
+import com.sespmt.practicalproject.mapper.PersonMapper;
 import com.sespmt.practicalproject.repositories.AddressRepository;
 import com.sespmt.practicalproject.repositories.PersonRepository;
 import com.sespmt.practicalproject.services.exceptions.DatabaseException;
 import com.sespmt.practicalproject.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +40,16 @@ public class PersonService {
     @Autowired
     private AddressRepository addressRepository;
 
-    private final PersonConverter personConverter = new PersonConverter();
+    private final PersonMapper personMapper = Mappers.getMapper(PersonMapper.class);
 
-    private final AddressConverter addressConverter = new AddressConverter();
+    private final AddressMapper addressMapper = Mappers.getMapper(AddressMapper.class);
+
 
     @Transactional(readOnly = true)
     public Page<PersonDto> findAllPaged(Pageable pageable) {
         Page<PersonEntity> page = personRepository.findAll(pageable);
-        return page.map(personConverter::toDto);
+
+        return buildPersonDtoPageReturn(page);
     }
 
     @Transactional(readOnly = true)
@@ -56,7 +59,7 @@ public class PersonService {
                                           Pageable pageable) {
         Page<PersonEntity> page = personRepository.searchFiltered(name, birthDate, motherName, pageable);
 
-        return page.map(personConverter::toDto);
+        return buildPersonDtoPageReturn(page);
     }
 
     @Transactional(readOnly = true)
@@ -78,13 +81,14 @@ public class PersonService {
                 PageRequest.of(0, 10),
                 personEntityList.size()
         );
-        return page.map(personConverter::toDto);
+        return buildPersonDtoPageReturn(page);
     }
 
     @Transactional(readOnly = true)
     public Page<PersonDto> findById(Long id) {
         Optional<PersonEntity> obj = personRepository.findById(id);
-        PersonEntity entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
+        PersonEntity entity = obj.orElseThrow(() ->
+                new ResourceNotFoundException("Person entity not found by id: " + id));
 
         List<PersonEntity> entityList = Collections.singletonList(entity);
         Page<PersonEntity> page = new PageImpl<>(
@@ -92,38 +96,56 @@ public class PersonService {
                 PageRequest.of(0, 10),
                 entityList.size()
         );
-        return page.map(personConverter::toDto);
+        return buildPersonDtoPageReturn(page);
     }
 
     @Transactional(readOnly = true)
     public Page<PersonDto> findByName(String name, Pageable pageable) {
         Page<PersonEntity> page = personRepository.findByNameIgnoreCaseContaining(name, pageable);
-        return page.map(personConverter::toDto);
+        return buildPersonDtoPageReturn(page);
     }
 
     @Transactional(readOnly = true)
     public Page<PersonDto> findByCpf(String cpf) {
         Page<PersonEntity> page = personRepository.findByCpf(cpf, PageRequest.ofSize(1));
-        return page.map(personConverter::toDto);
+
+        return buildPersonDtoPageReturn(page);
     }
 
     @Transactional
-    public PersonDto insert(PersonDto dto) {
+    public Page<PersonDto> insert(PersonDto dto) {
         verifyExistingFields(dto);
-        PersonEntity entity = personConverter.toEntity(dto);
+
+        PersonEntity entity = personMapper.toEntity(dto);
         entity.setCreatedAt(LocalDateTime.now());
         entity = personRepository.save(entity);
-        return personConverter.toDto(entity);
+
+        List<PersonEntity> entityList = Collections.singletonList(entity);
+        Page<PersonEntity> page = new PageImpl<>(
+                entityList,
+                PageRequest.of(0, 10),
+                entityList.size()
+        );
+
+        return buildPersonDtoPageReturn(page);
     }
 
     @Transactional
-    public PersonDto update(Long id, PersonDto dto) {
+    public Page<PersonDto> update(Long id, PersonDto dto) {
         try {
             Optional<PersonEntity> obj = personRepository.findById(id);
             PersonEntity entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
             buildPersonToUpdate(dto, entity);
             entity = personRepository.save(entity);
-            return personConverter.toDto(entity);
+
+            List<PersonEntity> entityList = Collections.singletonList(entity);
+            Page<PersonEntity> page = new PageImpl<>(
+                    entityList,
+                    PageRequest.of(0, 10),
+                    entityList.size()
+            );
+
+            return buildPersonDtoPageReturn(page);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Id not found " + id);
         } catch (DatabaseException e) {
@@ -151,14 +173,13 @@ public class PersonService {
         entity.setFatherName(dto.getFatherName());
         entity.setUpdatedAt(LocalDateTime.now());
 
-        entity.getAddress().clear();
-        for (AddressDto addressDto : dto.getAddress()) {
-            entity.getAddress().add(addressConverter.toEntity(addressDto));
+        entity.getAddresses().clear();
+        for (AddressDto addressDto : dto.getAddresses()) {
+            entity.getAddresses().add(addressMapper.toEntity(addressDto));
         }
     }
 
     private void verifyExistingFields(PersonDto personDto) {
-
         String cpf = personDto.getCpf();
         String motherName = personDto.getMotherName();
 
@@ -179,5 +200,18 @@ public class PersonService {
         if (!errorList.isEmpty()) {
             throw new DatabaseException(errorList.toString());
         }
+    }
+
+    private Page<PersonDto> buildPersonDtoPageReturn(Page<PersonEntity> personEntityPage) {
+        Page<PersonEntity> page = personEntityPage
+                .map(personEntity -> {
+                    personEntity.getAddresses().forEach(addressEntity -> {
+                        if (addressEntity.getPerson() != null) {
+                            addressEntity.setPerson(null);
+                        }
+                    });
+                    return personEntity;
+                });
+        return page.map(personMapper::toDto);
     }
 }
