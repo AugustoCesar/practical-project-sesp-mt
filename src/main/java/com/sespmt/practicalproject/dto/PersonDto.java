@@ -1,6 +1,7 @@
 package com.sespmt.practicalproject.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -23,6 +24,7 @@ import java.util.Set;
 public class PersonDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @Size(min = 5, max = 60, message = "Deve conter entre 5 e 60 caracteres")

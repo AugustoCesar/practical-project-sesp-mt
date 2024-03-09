@@ -1,6 +1,7 @@
 package com.sespmt.practicalproject.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -10,6 +11,7 @@ import java.util.Objects;
 public class AddressDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @Size(min = 1, max = 200, message = "Deve conter entre 1 e 200 caracteres válidos")
@@ -123,11 +125,11 @@ public class AddressDto implements Serializable {
     public void setPerson(PersonDto person) {
         this.person = person;
     }
-
+    @JsonIgnore
     public Long getPersonId() {
         return personId;
     }
-
+    @JsonProperty
     public void setPersonId(Long personId) {
         this.personId = personId;
     }
