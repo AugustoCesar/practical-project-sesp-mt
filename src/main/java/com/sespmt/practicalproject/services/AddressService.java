@@ -23,9 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,16 +74,22 @@ public class AddressService {
             throw new DatabaseException("personId deve ser diferente de null");
         }
         try {
-            Optional<PersonEntity> personEntityOpt = personRepository.findById(dto.getPersonId());
-            PersonEntity personEntity = personEntityOpt.orElseThrow(() ->
-                    new ResourceNotFoundException("Person entity not found by id: " + dto.getPersonId()));
+            PersonEntity personEntity = personRepository.findById(dto.getPersonId())
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("Person entity not found by id: " + dto.getPersonId()));
 
-            AddressEntity entity = addressMapper.toEntity(dto);
+            AddressEntity addressEntity = addressMapper.toEntity(dto);
 
-            personEntity.getAddresses().add(entity);
-            personRepository.save(personEntity);
+            personEntity.getAddresses().add(addressEntity);
 
-            List<AddressEntity> entityList = Collections.singletonList(entity);
+            personEntity = personRepository.save(personEntity);
+
+            Optional<AddressEntity> addressEntityOptional = personEntity.getAddresses().stream()
+                    .max(Comparator.comparing(AddressEntity::getId));
+
+            AddressEntity addressEntityCreated = addressEntityOptional.orElse(new AddressEntity());
+
+            List<AddressEntity> entityList = Collections.singletonList(addressEntityCreated);
             Page<AddressEntity> page = new PageImpl<>(
                     entityList,
                     PageRequest.of(0, 10),
@@ -104,38 +108,37 @@ public class AddressService {
             throw new DatabaseException("personId deve ser diferente de null");
         }
         try {
-            Optional<AddressEntity> obj = addressRepository.findById(id);
-            AddressEntity entity = obj.orElseThrow(() ->
-                    new ResourceNotFoundException("Address entity not found by id: " + id));
+            AddressEntity entity = addressRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Address entity not found by id: " + id));
 
-            if (!dto.getPersonId().equals(entity.getPerson().getId())) {
+            Long entityPersonId = entity.getPerson().getId();
+
+            if (!dto.getPersonId().equals(entityPersonId)) {
                 throw new DatabaseException("personId não pertencente a este address");
             }
 
-            Optional<PersonEntity> personEntityOpt = personRepository.findById(entity.getPerson().getId());
-            PersonEntity personEntity = personEntityOpt.orElseThrow(() ->
-                    new ResourceNotFoundException("Person entity not found by id: " + dto.getPersonId()));
+            PersonEntity personEntity = personRepository.findById(entityPersonId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Person entity not found by id: " + dto.getPersonId()));
 
-            personEntity.getAddresses()
-                    .stream()
-                    .map(addressEntity -> {
-                        if (addressEntity.getId().equals(id)) {
-                            buildAddressToUpdate(dto, entity);
-                        }
-                        return addressEntity;
-                    });
+            AddressEntity addressEntityToUpdate = new AddressEntity();
+            AddressEntity addressEntityToRemove = new AddressEntity();
 
-            personEntity = personRepository.save(personEntity);
+            for (AddressEntity addressEntity : personEntity.getAddresses()) {
+                if (Objects.equals(addressEntity.getId(), id)) {
+                    addressEntityToUpdate = addressEntity;
+                    addressEntityToRemove = addressEntity;
+                }
+            }
 
-            AddressEntity address = personEntity.getAddresses().stream()
-                    .filter(addressEntity -> addressEntity.getId().equals(id)).findFirst().orElse(null);
+            personEntity.getAddresses().remove(addressEntityToRemove);
 
-//            buildAddressToUpdate(dto, entity);
+            AddressEntity addressUpdated = buildAddressToUpdate(dto, addressEntityToUpdate);
 
-//            entity = addressRepository.save(entity);
+            personEntity.getAddresses().add(addressUpdated);
 
+            personRepository.save(personEntity);
 
-            List<AddressEntity> entityList = Collections.singletonList(address);
+            List<AddressEntity> entityList = Collections.singletonList(addressUpdated);
             Page<AddressEntity> page = new PageImpl<>(
                     entityList,
                     PageRequest.of(0, 10),
@@ -158,7 +161,7 @@ public class AddressService {
         }
     }
 
-    private void buildAddressToUpdate(AddressDto dto, AddressEntity entity) {
+    private AddressEntity buildAddressToUpdate(AddressDto dto, AddressEntity entity) {
 
         entity.setPublicPlace(dto.getPublicPlace());
         entity.setNeighborhood(dto.getNeighborhood());
@@ -167,6 +170,7 @@ public class AddressService {
         entity.setState(dto.getState());
         entity.setPostalCode(dto.getPostalCode());
 
+        return entity;
     }
 
     private Page<AddressDto> buildAddressDtoPageReturn(Page<AddressEntity> addressEntityPage) {
