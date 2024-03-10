@@ -99,6 +99,8 @@ public class AddressService {
             return buildAddressDtoPageReturn(page);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Integrity violation");
+        }catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Person entity not found by id " + dto.getPersonId());
         }
     }
 
