@@ -25,7 +25,7 @@ public class PersonRepositoryTests {
     void setUp() throws Exception {
         existingId = 1L;
         nonExistingId = 1000L;
-        countTotalPersons = 1;
+        countTotalPersons = 5;
     }
 
     @Test

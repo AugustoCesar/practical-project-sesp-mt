@@ -15,10 +15,10 @@ public class Factory {
         personEntity.setId(1L);
         personEntity.setName("Alex Brown");
         personEntity.setRg("111222333");
-        personEntity.setCpf("50800184025");
+        personEntity.setCpf("82433333040");
         personEntity.setBirthDate(LocalDate.of(1990, 3, 18));
         personEntity.setPhoneNumber("6598887755");
-        personEntity.setMotherName("Maria Brown");
+        personEntity.setMotherName("Maria Rosa Brown");
         personEntity.setFatherName("José Brown");
         personEntity.setCreatedAt(LocalDateTime.now());
         personEntity.getAddresses().add(createAddressEntity());
@@ -30,10 +30,10 @@ public class Factory {
         personDto.setId(1L);
         personDto.setName("Alex Brown");
         personDto.setRg("111222333");
-        personDto.setCpf("50800184025");
+        personDto.setCpf("82433333040");
         personDto.setBirthDate(LocalDate.of(1990, 3, 18));
         personDto.setPhoneNumber("6598887755");
-        personDto.setMotherName("Maria Brown");
+        personDto.setMotherName("Maria Rosa Brown");
         personDto.setFatherName("José Brown");
         personDto.setCreatedAt(LocalDateTime.now());
         personDto.getAddresses().add(createAddressDto());

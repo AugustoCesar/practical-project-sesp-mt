@@ -112,6 +112,27 @@ public class PersonServiceTests {
     }
 
     @Test
+    public void insertShouldThrowDatabaseExceptionWhenCpfAlreadyExistsInDatabase() {
+
+        personDto.setCpf("84934669051");
+
+        Assertions.assertThrows(DatabaseException.class, () -> {
+            personService.insert(personDto);
+        });
+    }
+
+    @Test
+    public void insertShouldThrowDatabaseExceptionWhenMotherNameAlreadyExistsInDatabase() {
+
+        personDto.setMotherName("Maria Clementina");
+
+        Assertions.assertThrows(DatabaseException.class, () -> {
+            personService.insert(personDto);
+        });
+    }
+
+
+    @Test
     public void updateShouldReturnPersonDtoPageWhenIdExists() {
 
         Page<PersonDto> result = personService.update(existingId, personDto);
