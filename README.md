@@ -17,13 +17,19 @@ O sistema permite o gerenciamento de informações básicas sobre pessoas, como 
 O H2 será inicializado automaticamente quando a aplicação for executada.  
 Obs.: Há um arquivo .sql que popula o banco de dados H2 com alguns registros automaticamente ao executar o projeto.
 
-**Execução do Projeto:** Navegue até o diretório raiz do projeto e execute o seguinte comando para iniciar a aplicação, caso tenha o Maven instalado na máquina:
-```bash
-# run project
-mvn spring-boot:run
-```
-Caso não tenha o Maven instalado na máquina, execute com o ./mvnw, conforme abaixo:
+**Execução do Projeto:** Navegue até o diretório raiz do projeto e execute o seguinte comando para iniciar a aplicação:
 ```bash
 # run project
 ./mvnw spring-boot:run
 ```
+
+## Endpoints
+
+Com a aplicação executando, acesse a url abaixo para ver as especificações de cada endpoint
+
+**Swagger:** http://localhost:8080/swagger-ui/index.html
+
+**Print swagger endpoints**
+
+![img.png](print_adresses_swagger.png)
+![img_1.png](print_persons_swagger.png)
